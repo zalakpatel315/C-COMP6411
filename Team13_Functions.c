@@ -23,14 +23,14 @@ const element NIL = { .type=LIST, .l=NULL };
 struct _listnode* originalList; 
 
 
-void printList(struct _listnode *originalList);
-void printListRecur(struct _listnode *originalList);
-void printCar(struct _listnode *originalList);
-void printCdr(struct _listnode *originalList);
-void printCarOfCar(struct _listnode *originalList);
+void printList(list originalList);
+void printListRecur(list originalList);
+void printCar(list originalList);
+void printCdr(list originalList);
+void printCarOfCar(list originalList);
 
 element aasel(atom a);
-element atomCompare(struct _listnode *originalList, atom a);
+element atomCompare(list originalList, atom a);
 
 list cons(element e, list l);
 
@@ -38,16 +38,18 @@ element car(element e);
 
 list cddr(element e);
 
+void lfree(list l);
+
 void main()
 {
     element ele_a = {ATOM, 'a'};
     
-    struct _listnode *point_c = malloc(sizeof *point_c);
+    list point_c = malloc(sizeof *point_c);
     element ele_c = {ATOM, 'c'};
     point_c->el = ele_c;
     point_c->next = NULL;
     
-    struct _listnode *point_b = malloc(sizeof *point_b);
+    list point_b = malloc(sizeof *point_b);
     element ele_b = {ATOM, 'b'};
     point_b->el = ele_b;
     point_b->next = point_c;
@@ -59,15 +61,15 @@ void main()
     element ele_d = {ATOM, 'd'};
     element ele_e = {ATOM, 'e'};
     
-    struct _listnode *point_e = malloc(sizeof *point_e);
+    list point_e = malloc(sizeof *point_e);
     point_e->el = ele_e;
     point_e->next = NULL;
     
-    struct _listnode *point_d = malloc(sizeof *point_d);
+    list point_d = malloc(sizeof *point_d);
     point_d->el = ele_d;
     point_d->next = point_e;
     
-    struct _listnode *point_bc = malloc(sizeof *point_bc);
+    list point_bc = malloc(sizeof *point_bc);
     point_bc->el = ele_bc;
     point_bc->next = point_d;
     
@@ -88,7 +90,7 @@ void main()
         element matchedElement =  aasel('a');
         printf("\n\nFunction 1 : Matched element : %c", matchedElement.a);
         
-        struct _listnode *newList = cons(ele_bc, point_e);
+        list newList = cons(ele_bc, point_e);
         printf("\nFunction 3 : ");
         printList(newList);
         
@@ -96,27 +98,27 @@ void main()
         printf("\nFunction 5 : Car of element : %c", carElement.a);
         
         
-        struct _listnode *point_z = malloc(sizeof *point_z);
+        list point_z = malloc(sizeof *point_z);
         element ele_z = {ATOM, 'z'};
         point_z->el = ele_z;
         point_z->next = NULL;
         
-        struct _listnode *point_y = malloc(sizeof *point_y);
+        list point_y = malloc(sizeof *point_y);
         element ele_y = {ATOM, 'y'};
         point_y->el = ele_y;
         point_y->next = point_z;
         
-        struct _listnode *point_x = malloc(sizeof *point_x);
+        list point_x = malloc(sizeof *point_x);
         element ele_x = {ATOM, 'x'};
         point_x->el = ele_x;
         point_x->next = point_y;
         
-        struct _listnode *point_w = malloc(sizeof *point_w);
+        list point_w = malloc(sizeof *point_w);
         element ele_w = {ATOM, 'w'};
         point_w->el = ele_w;
         point_w->next = point_x;
         
-        struct _listnode *point_v = malloc(sizeof *point_v);
+        list point_v = malloc(sizeof *point_v);
         element ele_v = {ATOM, 'v'};
         point_v->el = ele_v;
         point_v->next = point_w;
@@ -125,21 +127,24 @@ void main()
         ele_vwxyz.type = LIST;
         ele_vwxyz.l = point_v;
         
-        struct _listnode *cddrList = cddr(ele_vwxyz);
+        list cddrList = cddr(ele_vwxyz);
         printf("\nFunction 7 : cddr of vwxyz : %c %c %c", cddrList->el.a, cddrList->next->el.a, cddrList->next->next->el.a);
+        
+        lfree(originalList);
+        printf("\nFunction 9 : freed all the memory allocated");
     }
     free(originalList);
 	originalList = NULL;
 }
 
 
-void printList(struct _listnode *originalList) {
+void printList(list originalList) {
     printf("(");
     printListRecur(originalList);
     printf(")");
 }
 
-void printListRecur(struct _listnode *originalList) {
+void printListRecur(list originalList) {
     if(originalList != NULL) {
         if(originalList->el.type == ATOM) {
             printf(" %c ",(originalList->el.a));
@@ -155,7 +160,7 @@ void printListRecur(struct _listnode *originalList) {
     }
 }
 
-void printCar(struct _listnode *originalList) {
+void printCar(list originalList) {
     if(originalList != NULL) {
         if(originalList->el.type == ATOM) {
             printf(" %c ",(originalList->el.a));
@@ -168,7 +173,7 @@ void printCar(struct _listnode *originalList) {
     }
 }
 
-void printCdr(struct _listnode *originalList) {
+void printCdr(list originalList) {
     if(originalList->next != NULL) {
         printf("(");
         printListRecur(originalList->next);
@@ -176,7 +181,7 @@ void printCdr(struct _listnode *originalList) {
     }
 }
 
-void printCarOfCar(struct _listnode *originalList) {
+void printCarOfCar(list originalList) {
     if(originalList != NULL) {
         if(originalList->el.type == ATOM) {
             printf("NIL");
@@ -205,7 +210,7 @@ element aasel(atom a) {
     return atomCompare(originalList->next, a);
 }
 
-element atomCompare(struct _listnode *originalList, atom a) {
+element atomCompare(list originalList, atom a) {
     element matchedElement;
     if(originalList != NULL) {
         if(originalList->el.type == ATOM) {
@@ -227,7 +232,7 @@ element atomCompare(struct _listnode *originalList, atom a) {
 }
 
 list cons(element e, list l) {
-    struct _listnode *newList = malloc(sizeof *newList);
+    list newList = malloc(sizeof *newList);
     newList->el = e;
     newList->next = l;
     return newList;
@@ -245,9 +250,26 @@ element car(element e) {
 
 list cddr(element e) {
     if(e.type == LIST) {
-        struct _listnode *firstNodePointer = e.l->next; //ele w, ref to x
-        struct _listnode *secondNodePointer = firstNodePointer->next; //ele x, ref to y
+        list firstNodePointer = e.l->next; //ele w, ref to x
+        list secondNodePointer = firstNodePointer->next; //ele x, ref to y
         return secondNodePointer;
     }
 }
-    
+
+void lfree(list l){
+    list temp;
+   while (l != NULL)
+    {
+        if(l->el.type == LIST){
+            lfree(l->el.l);
+        }
+        if(l->next == NULL) {
+            free(l);
+            break;
+        } else {
+            temp = l;
+            l = l->next;
+            free(temp);
+        }
+    }
+}
