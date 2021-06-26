@@ -18,12 +18,17 @@ typedef struct _listnode {
 element el;
 struct _listnode* next;
 } * list;
-const element NIL = { .type=LIST, .l=NULL };
 
-void printList(struct _listnode *point_a);
-void printCar(struct _listnode *point_a);
-void printCdr(struct _listnode *point_a);
-void printCarOfCar(struct _listnode *point_a);
+const element NIL = { .type=LIST, .l=NULL };
+struct _listnode* originalList; 
+
+
+void printList(struct _listnode *originalList);
+void printCar(struct _listnode *originalList);
+void printCdr(struct _listnode *originalList);
+void printCarOfCar(struct _listnode *originalList);
+element aasel(atom a);
+element atomCompare(struct _listnode *originalList, atom a);
 
 void main()
 {
@@ -58,69 +63,111 @@ void main()
     point_bc->el = ele_bc;
     point_bc->next = point_d;
     
-    struct _listnode *point_a = malloc(sizeof *point_a);
-    point_a->el = ele_a;
-    point_a->next = point_bc;
+    originalList = malloc(sizeof *originalList);
+    originalList->el = ele_a;
+    originalList->next = point_bc;
     
-    if(point_a != NULL) {
+    if(originalList != NULL) {
         printf("(");
-        printList(point_a);
+        printList(originalList);
         printf(")\n");
-        printCar(point_a);
+        printCar(originalList);
         printf("\n");
-        printCdr(point_a);
+        printCdr(originalList);
         printf("\n");
-        printCarOfCar(point_a);        
+        printCarOfCar(originalList);
+        
+        element matchedElement =  aasel('a');
+        printf("\nMatched element : %c", matchedElement.a);
     }
-    free(point_a);
-	point_a = NULL;
+    free(originalList);
+	originalList = NULL;
 }
 
 
-void printList(struct _listnode *point_a) {
-    if(point_a != NULL) {
-        if(point_a->el.type == ATOM) {
-            printf(" %c ",(point_a->el.a));
+void printList(struct _listnode *originalList) {
+    if(originalList != NULL) {
+        if(originalList->el.type == ATOM) {
+            printf(" %c ",(originalList->el.a));
         }
-        else if(point_a->el.type == LIST) {
+        else if(originalList->el.type == LIST) {
             printf("(");
-            printList(point_a->el.l);
+            printList(originalList->el.l);
             printf(")");
         }
     }
-    if(point_a->next != NULL) {
-        printList(point_a->next);
+    if(originalList->next != NULL) {
+        printList(originalList->next);
     }
 }
 
-void printCar(struct _listnode *point_a) {
-    if(point_a != NULL) {
-        if(point_a->el.type == ATOM) {
-            printf(" %c ",(point_a->el.a));
+void printCar(struct _listnode *originalList) {
+    if(originalList != NULL) {
+        if(originalList->el.type == ATOM) {
+            printf(" %c ",(originalList->el.a));
         }
-        else if(point_a->el.type == LIST) {
+        else if(originalList->el.type == LIST) {
             printf("(");
-            printList(point_a->el.l);
+            printList(originalList->el.l);
             printf(")");
         }
     }
 }
 
-void printCdr(struct _listnode *point_a) {
-    if(point_a->next != NULL) {
+void printCdr(struct _listnode *originalList) {
+    if(originalList->next != NULL) {
         printf("(");
-        printList(point_a->next);
+        printList(originalList->next);
         printf(")");
     }
 }
 
-void printCarOfCar(struct _listnode *point_a) {
-    if(point_a != NULL) {
-        if(point_a->el.type == ATOM) {
+void printCarOfCar(struct _listnode *originalList) {
+    if(originalList != NULL) {
+        if(originalList->el.type == ATOM) {
             printf("NIL");
         }
-        else if(point_a->el.type == LIST) {
-            printCar(point_a->el.l);
+        else if(originalList->el.type == LIST) {
+            printCar(originalList->el.l);
         }
     }
+}
+
+element aasel(atom a) {
+    element matchedElement;
+     if(originalList != NULL) {
+        
+        if(originalList->el.type == ATOM && originalList->el.a == a) {
+            return originalList->el;
+        }
+        else if(originalList->el.type == LIST) {
+            matchedElement = atomCompare(originalList->el.l, a);
+        }
+    }
+    if(matchedElement.type == ATOM) 
+        return matchedElement;
+    
+
+    return atomCompare(originalList->next, a);
+}
+
+element atomCompare(struct _listnode *originalList, atom a) {
+    element matchedElement;
+    if(originalList != NULL) {
+        if(originalList->el.type == ATOM) {
+            if(originalList->el.a == a)
+                return originalList->el;
+        }
+        else if(originalList->el.type == LIST) {
+            matchedElement = atomCompare(originalList->el.l, a);
+            if(matchedElement.type == ATOM)
+                return matchedElement;
+        }
+    }
+    if(originalList->next != NULL) {
+          matchedElement = atomCompare(originalList->next, a);
+            if(matchedElement.type == ATOM)
+                return matchedElement;
+    }
+    return NIL;
 }
