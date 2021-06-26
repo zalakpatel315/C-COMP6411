@@ -24,11 +24,15 @@ struct _listnode* originalList;
 
 
 void printList(struct _listnode *originalList);
+void printListRecur(struct _listnode *originalList);
 void printCar(struct _listnode *originalList);
 void printCdr(struct _listnode *originalList);
 void printCarOfCar(struct _listnode *originalList);
+
 element aasel(atom a);
 element atomCompare(struct _listnode *originalList, atom a);
+
+list cons(element e, list l);
 
 void main()
 {
@@ -68,9 +72,8 @@ void main()
     originalList->next = point_bc;
     
     if(originalList != NULL) {
-        printf("(");
         printList(originalList);
-        printf(")\n");
+        printf("\n");
         printCar(originalList);
         printf("\n");
         printCdr(originalList);
@@ -79,6 +82,10 @@ void main()
         
         element matchedElement =  aasel('a');
         printf("\nMatched element : %c", matchedElement.a);
+        
+        struct _listnode *newList = cons(ele_a, point_bc);
+        printf("\n");
+        printList(newList);
     }
     free(originalList);
 	originalList = NULL;
@@ -86,18 +93,24 @@ void main()
 
 
 void printList(struct _listnode *originalList) {
+    printf("(");
+    printListRecur(originalList);
+    printf(")");
+}
+
+void printListRecur(struct _listnode *originalList) {
     if(originalList != NULL) {
         if(originalList->el.type == ATOM) {
             printf(" %c ",(originalList->el.a));
         }
         else if(originalList->el.type == LIST) {
             printf("(");
-            printList(originalList->el.l);
+            printListRecur(originalList->el.l);
             printf(")");
         }
     }
     if(originalList->next != NULL) {
-        printList(originalList->next);
+        printListRecur(originalList->next);
     }
 }
 
@@ -108,7 +121,7 @@ void printCar(struct _listnode *originalList) {
         }
         else if(originalList->el.type == LIST) {
             printf("(");
-            printList(originalList->el.l);
+            printListRecur(originalList->el.l);
             printf(")");
         }
     }
@@ -117,7 +130,7 @@ void printCar(struct _listnode *originalList) {
 void printCdr(struct _listnode *originalList) {
     if(originalList->next != NULL) {
         printf("(");
-        printList(originalList->next);
+        printListRecur(originalList->next);
         printf(")");
     }
 }
@@ -171,3 +184,12 @@ element atomCompare(struct _listnode *originalList, atom a) {
     }
     return NIL;
 }
+
+list cons(element e, list l) {
+    struct _listnode *newList = malloc(sizeof *newList);
+    newList->el = e;
+    newList->next = l;
+    return newList;
+}
+
+
