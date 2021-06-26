@@ -25,7 +25,7 @@ void printCar(struct _listnode *point_a);
 void printCdr(struct _listnode *point_a);
 void printCarOfCar(struct _listnode *point_a);
 
-int main()
+void main()
 {
     element ele_a = {ATOM, 'a'};
     
@@ -70,13 +70,10 @@ int main()
         printf("\n");
         printCdr(point_a);
         printf("\n");
-        printCarOfCar(point_a);
-        
+        printCarOfCar(point_a);        
     }
     free(point_a);
 	point_a = NULL;
-	
-    return 0;
 }
 
 
