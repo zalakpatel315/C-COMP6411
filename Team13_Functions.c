@@ -21,6 +21,9 @@ struct _listnode* next;
 const element NIL = { .type=LIST, .l=NULL };
 
 void printList(struct _listnode *point_a);
+void printCar(struct _listnode *point_a);
+void printCdr(struct _listnode *point_a);
+void printCarOfCar(struct _listnode *point_a);
 
 int main()
 {
@@ -62,8 +65,17 @@ int main()
     if(point_a != NULL) {
         printf("(");
         printList(point_a);
-        printf(")");
+        printf(")\n");
+        printCar(point_a);
+        printf("\n");
+        printCdr(point_a);
+        printf("\n");
+        printCarOfCar(point_a);
+        
     }
+    free(point_a);
+	point_a = NULL;
+	
     return 0;
 }
 
@@ -84,3 +96,34 @@ void printList(struct _listnode *point_a) {
     }
 }
 
+void printCar(struct _listnode *point_a) {
+    if(point_a != NULL) {
+        if(point_a->el.type == ATOM) {
+            printf(" %c ",(point_a->el.a));
+        }
+        else if(point_a->el.type == LIST) {
+            printf("(");
+            printList(point_a->el.l);
+            printf(")");
+        }
+    }
+}
+
+void printCdr(struct _listnode *point_a) {
+    if(point_a->next != NULL) {
+        printf("(");
+        printList(point_a->next);
+        printf(")");
+    }
+}
+
+void printCarOfCar(struct _listnode *point_a) {
+    if(point_a != NULL) {
+        if(point_a->el.type == ATOM) {
+            printf("NIL");
+        }
+        else if(point_a->el.type == LIST) {
+            printCar(point_a->el.l);
+        }
+    }
+}
