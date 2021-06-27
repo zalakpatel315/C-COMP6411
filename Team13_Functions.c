@@ -351,3 +351,47 @@ void lfree(list l){
         }
     }
 }
+element lasel(list l){
+    struct _listnode* current = originalList;
+    element requiredElement;
+    while(current->next != NULL){
+        if(current->el.type==LIST && current->el.l == l){
+            return current->el;
+        }else{
+            current = current->next;
+        }
+    }
+}
+list append(list l1, list l2){
+    list result = NULL;
+    if(l1 == NULL ){
+        return (l2);
+    }
+    else if (l2 == NULL){
+        return (l1);
+    }
+    else{
+        result = l1;
+        result->next = append(l1->next, l2);
+    }
+}
+list cdr(element e){
+    if(e.type == ATOM){
+        printf("\n Element was Atom");
+        return NULL;
+    }else{
+        printf("\n Returning pointer to next node");
+        return(e.l->next);
+    }
+}
+void print(element e){
+    if(e.type == LIST && e.l == NULL){
+        printf("\nNIL");
+    }else if(e.type == LIST && e.l!=NULL){
+        printf("\n(");
+        printList(e.l);
+        printf(")");
+    }else{
+        printf("\t %c \t", e.a);
+    }
+}
