@@ -137,6 +137,84 @@ void main()
 	originalList = NULL;
 }
 
+element createAtomElement(atom r){
+    element e;
+    e.type = ATOM;
+    e.a = r;
+    return e;
+}
+
+void addElement(struct _listnode* head ,element ele){
+    printf("entered add element\n");
+    struct _listnode* current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = (struct _listnode*) malloc(sizeof(struct _listnode));
+    current->next->el = ele;
+    current->next->next = NULL;
+}
+element createListElement(struct _listnode* startOfList){
+    element e;
+    e.type = LIST;
+    e.l = startOfList;
+    return e;
+}
+struct _listnode* createSubList(){
+    struct _listnode* newList = (struct _listnode*) malloc(sizeof(struct _listnode));
+    newList->next=NULL;
+    int numberNodes, i, choice;
+    char tempC;
+    printf("enter number of nodes : ");
+    scanf("%d", &numberNodes);
+    printf("Press 1 for atom, 2 for List : ");
+    scanf("%d", &choice);
+    if(choice == 1){
+        printf("Enter character : ");
+        scanf(" %c", &tempC);
+        newList->el = createAtomElement(tempC);
+    }else{
+        newList->el = createListElement(createSubList());
+    }
+    for(i=1; i<numberNodes; i++){
+        printf("Press 1 for atom, 2 for List : ");
+        scanf("%d", &choice);
+        if(choice == 1){
+            printf("Enter character : ");
+            scanf(" %c", &tempC);
+            addElement(newList, createAtomElement(tempC));
+        }else{
+            addElement(newList, createListElement(createSubList()));
+        }
+    }
+    return newList;
+}
+void createList(struct _listnode* mainList){
+    int numberNodes, i, choice;
+    char tempC;
+    printf("enter number of nodes : ");
+    scanf("%d", &numberNodes);
+    printf("Press 1 for atom, 2 for List : ");
+    scanf("%d", &choice);
+    if(choice == 1){
+        printf("Enter character : ");
+        scanf(" %c", &tempC);
+        mainList->el = createAtomElement(tempC);
+    }else{
+        mainList->el = createListElement(createSubList());
+    }
+    for(i=1; i<numberNodes; i++){
+        printf("Press 1 for atom, 2 for List : ");
+        scanf("%d", &choice);
+        if(choice == 1){
+            printf("Enter character : ");
+            scanf(" %c", &tempC);
+            addElement(mainList, createAtomElement(tempC));
+        }else{
+            addElement(mainList, createListElement(createSubList()));
+        }
+    }
+}
 
 void printList(list originalList) {
     printf("(");
